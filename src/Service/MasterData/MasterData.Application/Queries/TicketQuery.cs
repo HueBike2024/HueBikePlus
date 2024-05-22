@@ -80,7 +80,7 @@ namespace MasterData.Application.Queries
                                            UserFullName = User.FullName,
                                            UserPhone = Ticket.UserPhone,
                                            BikeId = Bike.Id,
-                                           BikeName = Bike.BikeName,
+                                           BikeCode = Bike.BikeCode,
                                            CategoryTicketId = CategoryTicket.Id,
                                            CategoryTicketName = CategoryTicket.CategoryTicketName,
                                            PathQr = Ticket.PathQr,
@@ -104,7 +104,7 @@ namespace MasterData.Application.Queries
                     e.TicketNo.ToLower().Contains(request.SearchTerm) ||
                     e.UserFullName.ToLower().Contains(request.SearchTerm) ||
                     e.UserPhone.ToLower().Contains(request.SearchTerm) ||
-                    e.BikeName.ToLower().Contains(request.SearchTerm) ||
+                    e.BikeCode.ToLower().Contains(request.SearchTerm) ||
                     e.CategoryTicketName.ToLower().Contains(request.SearchTerm) ||
                     e.Id == searchTermAsLong || // So sánh với ID dạng long
                     (isNumeric && e.Id == searchTermAsLong) // Kiểm tra nếu SearchTerm có thể chuyển thành long
@@ -177,7 +177,7 @@ namespace MasterData.Application.Queries
                     ExpiryDate = k.ExpiryDate,
                     QrImg = k.QrImage,
                     BikeId = k.BikeId,
-                    BikeName = bike.BikeName,
+                    BikeCode = bike.BikeCode,
                     CategoryTicketId = categoryTicket.Id,
                     CategoryTicketName = categoryTicket.CategoryTicketName,
                     Price = k.Price,
@@ -208,7 +208,7 @@ namespace MasterData.Application.Queries
                                                  UserFullName = User.FullName,
                                                  UserPhone = Ticket.UserPhone,
                                                  BikeId = Bike.Id,
-                                                 BikeName = Bike.BikeName,
+                                                 BikeCode = Bike.BikeCode,
                                                  CategoryTicketId = CategoryTicket.Id,
                                                  CategoryTicketName = CategoryTicket.CategoryTicketName,
                                                  PathQr = Ticket.PathQr,

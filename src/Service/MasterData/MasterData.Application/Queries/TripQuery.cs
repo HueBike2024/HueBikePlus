@@ -48,7 +48,7 @@ namespace MasterData.Application.Queries
         }
         public async Task<GetBikeInfoForTripResponse> GetBikeInfoAsync(GetBikeInfoForTripCommand request)
         {
-            var bike = await _bikeRep.FindOneAsync(e => e.PathQr == request.PathQr);
+            var bike = await _bikeRep.FindOneAsync(e => e.Id == request.Id);
             if (bike == null)
             {
                 throw new BaseException(ErrorsMessage.MSG_NOT_EXIST, "Xe");
@@ -64,6 +64,7 @@ namespace MasterData.Application.Queries
             return new GetBikeInfoForTripResponse
             {
                 Id = bike.Id,
+                BikeCode = bike.BikeCode,
                 StationName = station.StationName,
                 Location = $"{station.Longitude} - {station.Latitude}"
             };

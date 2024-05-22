@@ -11,6 +11,7 @@ using static MasterData.API.Commons.Routes;
 
 namespace MasterData.API.Controllers
 {
+    [Route(TripRoutes.Prefix)]
     public class TripController : BaseApiController
     {
 

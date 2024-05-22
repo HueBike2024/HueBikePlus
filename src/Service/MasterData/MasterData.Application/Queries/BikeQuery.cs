@@ -53,7 +53,7 @@ namespace MasterData.Application.Queries
                .Select(k => new BikeDetailResponse
                {
                    Id = k.Id,
-                   BikeName = k.BikeName,
+                   BikeCode = k.BikeCode,
                    StationId = k.StationId,
                    StationName = k.Station.StationName,
                    PathQr = k.PathQr,
@@ -76,7 +76,7 @@ namespace MasterData.Application.Queries
                                              select new BikeResponse
                                              {
                                                  Id = Bike.Id,
-                                                 BikeName = Bike.BikeName,
+                                                 BikeCode = Bike.BikeCode,
                                                  Location = Station.LocationName,
                                                  StatusId= Bike.StatusId,
                                                  StationName = Station.StationName,
@@ -92,7 +92,7 @@ namespace MasterData.Application.Queries
             if (!string.IsNullOrEmpty(request.SearchTerm))
             {
                 request.SearchTerm = request.SearchTerm.ToLower().Trim();
-                listBikeResponse = listBikeResponse.Where(e => e.BikeName.Trim().ToLower().Contains(request.SearchTerm) || e.PathQr.Trim().ToLower().Contains(request.SearchTerm));
+                listBikeResponse = listBikeResponse.Where(e => e.BikeCode.Trim().ToLower().Contains(request.SearchTerm) || e.PathQr.Trim().ToLower().Contains(request.SearchTerm));
             }
 
             
