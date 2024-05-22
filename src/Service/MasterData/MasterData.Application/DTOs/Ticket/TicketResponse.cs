@@ -20,7 +20,7 @@ namespace MasterData.Application.DTOs.Ticket
         public DateTime? ExpiryDate { get; set; }
         public string? QrImg { get; set; }
         public long? BikeId { get; set; }
-        public string BikeName { get; set; }
+        public string BikeCode { get; set; }
         public long CategoryTicketId { get; set; }
         public string CategoryTicketName { get; set; }
         public decimal Price { get; set; }

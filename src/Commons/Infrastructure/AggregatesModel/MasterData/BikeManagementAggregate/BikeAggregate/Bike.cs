@@ -15,13 +15,13 @@ namespace Infrastructure.AggregatesModel.MasterData.BikeManagementAggregate.Bike
     public class Bike : BaseEntity
     {
         
-        public string BikeName { get; set; }
+        public string BikeCode { get; set; }
         public string? PathQr { get; set; }
         public string? QrCodeImage { get; set; }
         public int? Power { get; set; }
         public int RentalQuantity { get; set; }
         public long StatusId { get; set; }
-        public long StationId { get; set; }
+        public long? StationId { get; set; }
         public bool IsActive { get; set; }
 
         public virtual Status Status { get; set; }
@@ -34,9 +34,9 @@ namespace Infrastructure.AggregatesModel.MasterData.BikeManagementAggregate.Bike
 
         }
 
-        public Bike(string bikeName, long statusId, long stationId)
+        public Bike(string bikeCode, long statusId, long? stationId)
         {
-            BikeName = bikeName;
+            BikeCode = bikeCode;
             StatusId = statusId;
             StationId = stationId;
             RentalQuantity = 0;

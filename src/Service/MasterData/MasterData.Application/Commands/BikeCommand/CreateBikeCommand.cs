@@ -27,9 +27,9 @@ namespace MasterData.Application.Commands.BikeCommand
     {
         public long? BikeId { get; set; }
         public int? Power { get; set; }
-        public string BikeName { get; set; }
-        public long StationId { get; set; }
+        public long? StationId { get; set; }
         public long StatusId { get; set; }
+        public string BaseQrUrl { get; set; }
     }
     public class CreateBikeCommandHandler : IRequestHandler<CreateBikeCommand, bool>
     {
@@ -60,22 +60,8 @@ namespace MasterData.Application.Commands.BikeCommand
 
             if (httpContext.Request.Method == HttpMethods.Post && (request.BikeId == null || request.BikeId == 0))
             {
-                var isExisName = await _bikeRep.GetAny(e => e.BikeName.Trim().ToLower() == request.BikeName.Trim().ToLower());
 
-                // Kiểm tra xem tên xe đã tồn tại tên trước đó chưa
-                if (isExisName)
-                {
-                    throw new BaseException(ErrorsMessage.MSG_EXIST, "Tên xe");
-                }
-                var station = await _stationRep.FindOneAsync(e => e.Id == request.StationId);
-
-                // Kiểm tra số lượng chỗ trong trạm
-                if (station.QuantityAvaiable == station.NumOfSeats)
-                {
-                    throw new BaseException("Số chỗ của trạm đã đạt giới hạn, vui lòng chọn trạm khác");
-                }
                 var status = await _statusRep.FindOneAsync(e => e.Id == request.StatusId);
-
                 // Kiểm tra trạng thái
                 if (status == null)
                 {
@@ -91,18 +77,30 @@ namespace MasterData.Application.Commands.BikeCommand
                 //}
 
 
-                var bike = new Bike(request.BikeName, request.StatusId, request.StationId);
+                var bike = new Bike("", request.StatusId, request.StationId);
+
+                if (request.StationId != null || request.StationId != 0)
+                {
+                    var station = await _stationRep.FindOneAsync(e => e.Id == request.StationId);
+
+                    // Kiểm tra số lượng chỗ trong trạm
+                    if (station.QuantityAvaiable == station.NumOfSeats)
+                    {
+                        throw new BaseException("Số chỗ của trạm đã đạt giới hạn, vui lòng chọn trạm khác");
+                    }
+
+                    station.QuantityAvaiable += 1;
+                    _stationRep.Update(station);
+                }
                 _bikeRep.Add(bike);
-                station.QuantityAvaiable += 1;
-                _stationRep.Update(station);
 
                 await _unitOfWork.SaveChangesAsync();
 
                 //tạo mã Qr và gàn lại cho bike
-                var pathQr = _randomService.GenerateRandomAlphabet(16) + bike.Id;
+                var pathQr = $"{request.BaseQrUrl}/master-data/api/trip/new-trip?Id={bike.Id}";
 
                 //kiểm tra Qr
-                if(pathQr != null)
+                if (pathQr != null)
                 {
                     var isExistQr = await _bikeRep.GetAny(e => e.PathQr == pathQr && e.Id != request.BikeId);
 
@@ -171,6 +169,10 @@ namespace MasterData.Application.Commands.BikeCommand
                     throw new BaseException(ErrorsMessage.MSG_NOT_EXIST, "PathQr");
                 }
 
+                //Tạo mã cho xe( tên xe)
+                var bikeCode = "Bike" + bike.Id;
+
+                bike.BikeCode = bikeCode;
                 _bikeRep.Update(bike);
 
                 await _unitOfWork.SaveChangesAsync();
@@ -184,13 +186,6 @@ namespace MasterData.Application.Commands.BikeCommand
                 if (bike == null)
                 {
                     throw new BaseException("Không tìm thấy xe!");
-                }
-
-                var existBikeName = await _bikeRep.FindOneAsync(e => e.BikeName.Trim().ToLower() == request.BikeName.Trim().ToLower() && e.Id != bike.Id);
-                // Kiểm tra xem xe đã tồn tại tên trước đó chưa
-                if (existBikeName != null)
-                {
-                    throw new BaseException(ErrorsMessage.MSG_EXIST, "Tên xe");
                 }
 
                 var station = await _stationRep.FindOneAsync(e => e.Id == request.StationId);
@@ -211,7 +206,6 @@ namespace MasterData.Application.Commands.BikeCommand
 
 
 
-                bike.BikeName = request.BikeName;
                 bike.Power = request.Power;
                 bike.StatusId = request.StatusId;
                 bike.StationId = request.StationId;

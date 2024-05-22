@@ -17,13 +17,13 @@ namespace Infrastructure.EntityConfigurations.MasterData.BikeManagementConfig.Bi
             builder.ToTable("Bike");
             builder.HasKey(x => new { x.Id });
 
-            builder.Property(x => x.BikeName).HasMaxLength(50).IsRequired();
-            builder.Property(x => x.PathQr).HasMaxLength(50);
+            builder.Property(x => x.BikeCode).HasMaxLength(50).IsRequired();
+            builder.Property(x => x.PathQr).HasMaxLength(500);
             builder.Property(x => x.QrCodeImage).HasMaxLength(500);
             builder.Property(x => x.Power).HasMaxLength(3);
             builder.Property(x => x.RentalQuantity).HasMaxLength(10);
             builder.Property(x => x.StatusId).HasMaxLength(20).IsRequired(); 
-            builder.Property(x => x.StationId).HasMaxLength(20).IsRequired();
+            builder.Property(x => x.StationId).HasMaxLength(20);
 
             builder
                 .HasOne(x => x.Status)

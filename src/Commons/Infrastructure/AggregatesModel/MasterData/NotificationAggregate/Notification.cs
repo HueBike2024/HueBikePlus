@@ -27,7 +27,7 @@ namespace Infrastructure.AggregatesModel.MasterData.NotificationAggregate
             
         }
 
-        public Notification(string title, string image, string content, long senderId)
+        public Notification(string title, string image, string content, long? senderId)
         {
             Title = title;
             Image = image;

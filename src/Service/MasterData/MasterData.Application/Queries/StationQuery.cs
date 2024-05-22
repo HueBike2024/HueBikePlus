@@ -66,7 +66,7 @@ namespace MasterData.Application.Queries
                 .Select(b => new BikeList
                 {
                     Id = b.Id,
-                    BikeName = b.BikeName,                 
+                    BikeCode = b.BikeCode,                 
                     StatusName = b.Status.StatusName 
                 }).ToListAsync();
 

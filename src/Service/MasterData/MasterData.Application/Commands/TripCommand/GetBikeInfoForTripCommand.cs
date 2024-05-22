@@ -8,6 +8,6 @@ namespace MasterData.Application.Commands.TripCommand
 {
     public class GetBikeInfoForTripCommand
     {
-        public string PathQr {  get; set; }
+        public long Id {  get; set; }
     }
 }

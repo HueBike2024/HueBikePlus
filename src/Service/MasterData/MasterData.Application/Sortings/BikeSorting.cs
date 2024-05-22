@@ -10,7 +10,7 @@ namespace MasterData.Application.Sortings
     {
         public static Dictionary<string, string> Mapping = new Dictionary<string, string>
         {
-            { "bikeName", "BikeName" },
+            { "bikeCode", "BikeCode" },
             { "pathQr", "PathQr" },
 
         };
