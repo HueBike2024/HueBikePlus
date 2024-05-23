@@ -101,7 +101,7 @@ namespace MasterData.Application.Commands.TripCommand
                     throw new BaseException("Bạn cần phải có ít nhất 10.000 điểm để bắt đầu chuyến đi!");
                 }
 
-                var trip = new Trip(false, false, station.Id, ticket.Id);
+                var trip = new Trip(false, false, station.Id, ticket.Id, ticket.Price);
 
                 _tripRep.Add(trip);
                 
@@ -147,7 +147,7 @@ namespace MasterData.Application.Commands.TripCommand
                     throw new BaseException("Có lỗi khi thực hiện chuẩn bị cho chuyến đi!");
                 }
 
-                var trip = new Trip(false, false, station.Id, addTicketResponse.Id);
+                var trip = new Trip(false, false, station.Id, addTicketResponse.Id, addTicketResponse.Price);
 
                 _tripRep.Add(trip);
 
