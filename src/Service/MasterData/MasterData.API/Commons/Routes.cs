@@ -206,6 +206,17 @@
             public const string Detail = "detail";
         }
 
+        public static class EventRoutes
+        {
+            public const string Prefix = @"master-data/api/event";
+            public const string List = "list";
+            public const string Create = "create";
+            public const string Delete = "del";
+            public const string Update = "update";
+            public const string Detail = "detail";
+        }
+
+
         public static class BannerRoutes
         {
             public const string Prefix = @"master-data/api/banner";

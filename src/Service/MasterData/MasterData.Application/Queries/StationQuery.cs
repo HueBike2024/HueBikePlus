@@ -93,99 +93,50 @@ namespace MasterData.Application.Queries
             return stationDetail;
         }
 
-
         public async Task<PagingResultSP<StationResponse>> ListAsync(ListStationCommand request)
         {
-            var query = _stationRep.GetQuery();
+            var query = _stationRep.GetQuery().Include(e => e.Status);
 
             if (!string.IsNullOrEmpty(request.SearchTerm))
             {
                 request.SearchTerm = request.SearchTerm.ToLower().Trim();
-                query = query.Where(e => e.StationName.ToLower().Contains(request.SearchTerm));
-
+              //  query = query.Where(e => e.StationName.ToLower().Contains(request.SearchTerm));
             }
-            var stationResponse = query.Select(e => new StationResponse
+
+            var stations = await query.ToListAsync();
+
+            var stationResponses = stations.Select(e =>
             {
-                Id = e.Id,
+                var activeBikeCount = _bikeRep.GetQuery(b => b.StationId == e.Id && b.StatusId == 1).Count();
+                var inactiveBikeCount = _bikeRep.GetQuery(b => b.StationId == e.Id && b.StatusId == 2).Count();
 
-                StationName = e.StationName,
-                QuantityAvaiable = e.QuantityAvaiable,
-                NumOfSeats = e.NumOfSeats,
-                LocationName= e.LocationName,
-                Longitude = e.Longitude,
-                Latitude = e.Latitude,               
-                StatusName = e.Status.StatusName,
-                StatusId = e.StatusId
-                
-               
-                
-
-            });
+                return new StationResponse
+                {
+                    Id = e.Id,
+                    StationName = e.StationName,
+                    QuantityAvaiable = e.QuantityAvaiable,
+                    NumOfSeats = e.NumOfSeats,
+                    LocationName = e.LocationName,
+                    Longitude = e.Longitude,
+                    Latitude = e.Latitude,
+                    StatusName = e.Status?.StatusName ?? "Unknown", // Kiểm tra null cho Status
+                    StatusId = e.StatusId,
+                    ActiveBikeCount = activeBikeCount,
+                    InactiveBikeCount = inactiveBikeCount
+                };
+            }).ToList();
 
             if (string.IsNullOrEmpty(request.OrderBy) && string.IsNullOrEmpty(request.OrderByDesc))
             {
-                stationResponse = stationResponse.OrderBy(e => e.Id);
+                stationResponses = stationResponses.OrderBy(e => e.Id).ToList();
             }
             else
             {
-                stationResponse = PagingSorting.Sorting(request, stationResponse);
-            }
-            var pageIndex = request.PageSize * (request.PageIndex - 1);
-
-            var response = await PaginatedList<StationResponse>.CreateAsync(stationResponse, pageIndex, request.PageSize);
-
-            var result = new PagingResultSP<StationResponse>(response, response.Total, request.PageIndex, request.PageSize);
-            var i = pageIndex + 1;
-
-            foreach (var item in result.Data)
-            {
-                item.Index = i++;
+                stationResponses = PagingSorting.Sorting(request, stationResponses.AsQueryable()).ToList();
             }
 
-            return result;
-
-        }
-
-        public async Task<PagingResultSP<StationResponse>> ListStation(ListStationUserCommand request)
-        {
-            // Nhận tọa độ từ yêu cầu
-            double userLatitude = request.UserLatitude;
-            double userLongitude = request.UserLongitude;
-
-            var query = _stationRep.GetQuery();
-
-            if (!string.IsNullOrEmpty(request.SearchTerm))
-            {
-                request.SearchTerm = request.SearchTerm.ToLower().Trim();
-                query = query.Where(e => e.StationName.ToLower().Contains(request.SearchTerm));
-            }
-
-            var stationResponses = await query.Select(e => new StationResponse
-            {
-                Id = e.Id,
-                StationName = e.StationName,
-                QuantityAvaiable = e.QuantityAvaiable,
-                NumOfSeats = e.NumOfSeats,
-                LocationName = e.LocationName,
-                Longitude = e.Longitude,
-                Latitude = e.Latitude,
-                StatusName = e.Status.StatusName,
-                StatusId = e.StatusId
-            }).ToListAsync();
-
-            // Tính khoảng cách và sắp xếp
-           
-            var sortedStationResponses = stationResponses.Select(e =>
-            {
-                e.Distance = _stationService.GetDistance(userLatitude, userLongitude, e.Latitude, e.Longitude);
-                return e;
-            })
-            .OrderBy(e => e.Distance)
-            .ToList();
-
-            // Paging
-            var total = sortedStationResponses.Count;
-            var pagedStations = sortedStationResponses.Skip((request.PageIndex - 1) * request.PageSize).Take(request.PageSize).ToList();
+            var total = stationResponses.Count;
+            var pagedStations = stationResponses.Skip((request.PageIndex - 1) * request.PageSize).Take(request.PageSize).ToList();
 
             var result = new PagingResultSP<StationResponse>(pagedStations, total, request.PageIndex, request.PageSize);
             var i = (request.PageIndex - 1) * request.PageSize + 1;
@@ -196,8 +147,67 @@ namespace MasterData.Application.Queries
             }
 
             return result;
-
         }
+
+        public async Task<PagingResultSP<StationResponse>> ListStation(ListStationUserCommand request)
+        {
+            double userLatitude = request.UserLatitude;
+            double userLongitude = request.UserLongitude;
+
+            var query = _stationRep.GetQuery().Include(e => e.Status);
+
+            if (!string.IsNullOrEmpty(request.SearchTerm))
+            {
+                request.SearchTerm = request.SearchTerm.ToLower().Trim();
+               // query = query.Where(e => e.StationName.ToLower().Contains(request.SearchTerm));
+            }
+
+            var stations = await query.ToListAsync();
+
+            var stationResponses = stations.Select(e =>
+            {
+                var activeBikeCount = _bikeRep.GetQuery(b => b.StationId == e.Id && b.StatusId == 1).Count();
+                var inactiveBikeCount = _bikeRep.GetQuery(b => b.StationId == e.Id && b.StatusId == 2).Count();
+                var distance = _stationService.GetDistance(userLatitude, userLongitude, e.Latitude, e.Longitude);
+
+                return new StationResponse
+                {
+                    Id = e.Id,
+                    StationName = e.StationName,
+                    QuantityAvaiable = e.QuantityAvaiable,
+                    NumOfSeats = e.NumOfSeats,
+                    LocationName = e.LocationName,
+                    Longitude = e.Longitude,
+                    Latitude = e.Latitude,
+                    StatusName = e.Status?.StatusName ?? "Unknown", // Kiểm tra null cho Status
+                    StatusId = e.StatusId,
+                    ActiveBikeCount = activeBikeCount,
+                    InactiveBikeCount = inactiveBikeCount,
+                    Distance = distance
+                };
+            }).OrderBy(e => e.Distance).ToList();
+
+            var total = stationResponses.Count;
+            var pagedStations = stationResponses.Skip((request.PageIndex - 1) * request.PageSize).Take(request.PageSize).ToList();
+
+            var result = new PagingResultSP<StationResponse>(pagedStations, total, request.PageIndex, request.PageSize);
+            var i = (request.PageIndex - 1) * request.PageSize + 1;
+
+            foreach (var item in result.Data)
+            {
+                item.Index = i++;
+            }
+
+            return result;
+        }
+
+
+
+
+
+
+
+
 
 
     }
