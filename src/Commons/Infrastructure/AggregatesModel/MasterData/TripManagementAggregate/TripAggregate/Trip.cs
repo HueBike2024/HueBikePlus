@@ -17,7 +17,7 @@ namespace Infrastructure.AggregatesModel.MasterData.TripManagementAggregate.Trip
         public bool IsEnd { get; set; }
         public bool IsDebt { get; set; }
         public long StartStationId { get; set;}
-        public long EndStationId { get; set; } = 0;
+        public long? EndStationId { get; set; } = null;
         public long TicketId { get; set;}
         public int MinutesTraveled { get; set; } = 0;
         public int ExcessMinutes { get; set; } = 0; 

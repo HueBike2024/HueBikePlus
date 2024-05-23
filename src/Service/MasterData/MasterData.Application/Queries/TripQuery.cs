@@ -64,11 +64,12 @@ namespace MasterData.Application.Queries
         private readonly IRepository<Status> _statusRep;
         private readonly IRepository<User> _userRep;
 
-        public TripQuery(IRepository<Ticket> ticketRep, IRepository<Bike> bikeRep, IRepository<Trip> tripRep, IRepository<Station> stationRep, IRepository<Status> statusRep, IRepository<User> userRep)
+        public TripQuery(IRepository<CategoryTicket> cateRep, IRepository<Ticket> ticketRep, IRepository<Bike> bikeRep, IRepository<Trip> tripRep, IRepository<Station> stationRep, IRepository<Status> statusRep, IRepository<User> userRep)
         {
             _ticketRep = ticketRep;
             _bikeRep = bikeRep;
             _tripRep = tripRep;
+            _cateRep = cateRep;
             _stationRep = stationRep;
             _statusRep = statusRep;
             _userRep = userRep;
@@ -150,9 +151,10 @@ namespace MasterData.Application.Queries
                                                join CategoryTicket in _cateRep.GetQuery() on Ticket.CategoryTicketId equals CategoryTicket.Id
                                                join Bike in _bikeRep.GetQuery() on Ticket.BikeId equals Bike.Id
                                                join User in _userRep.GetQuery() on Ticket.UserId equals User.Id
-                                               where ((Trip.IsEnd == false && Trip.IsDebt == false) || (Trip.IsEnd == false && Trip.IsDebt != false)) && User.Id == User.Id
+                                               where ((Trip.IsEnd == false && Trip.IsDebt == false) || (Trip.IsEnd == false && Trip.IsDebt != false)) && User.Id == UserId
                                                select new UserTripResponse
                                                {
+                                                   Id = Trip.Id,
                                                    BikeId = Bike.Id,
                                                    BikePower = Bike.Power,
                                                    TripStatus = Trip.IsDebt == true ? "Nợ cước" : "Đang hoạt động",
@@ -164,7 +166,7 @@ namespace MasterData.Application.Queries
 
             if (string.IsNullOrEmpty(request.OrderBy) && string.IsNullOrEmpty(request.OrderByDesc))
             {
-                listTripResponse = listTripResponse.OrderBy(e => e.Index);
+                listTripResponse = listTripResponse.OrderByDescending(e => e.MinutesTraveled);
             }
             else
             {
