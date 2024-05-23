@@ -7,11 +7,12 @@ using System.Threading.Tasks;
 
 namespace MasterData.Application.DTOs.Trip
 {
-    public class TripResponse : BaseExtendEntities
+    public class ListTripEndedResponse : BaseExtendEntities
     {
         public int Index { get; set; }
-        public long? TripId { get; set; }
         public long BikeId { get; set; }
+        public DateTime StartTime { get; set; }
+        public DateTime EndTime { get; set; }
         public string StartStation { get; set; }
         public string EndStation { get; set; }
         public string TripStatus { get; set; }

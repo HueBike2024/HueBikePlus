@@ -4,12 +4,9 @@ using Infrastructure.AggregatesModel.Authen.AccountAggregate;
 using Infrastructure.AggregatesModel.MasterData.NotificationAggregate;
 using Infrastructure.AggregatesModel.MasterData.TripManagementAggregate.TicketAggregate;
 using Infrastructure.AggregatesModel.MasterData.TripManagementAggregate.TripAggregate;
-using MediatR;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace MasterData.Application.Services.TripService
@@ -56,19 +53,22 @@ namespace MasterData.Application.Services.TripService
                 var tripDuration = (now - trip.StartDate).TotalMinutes;
                 trip.MinutesTraveled = (int)tripDuration;
 
-                if (tripDuration > categoryTicket.UserTime * 60) // Convert hours to minutes
+                if (tripDuration > categoryTicket.UserTime * 60)
                 {
+                    trip.IsDebt = true;
+
                     // Chuyến đi vượt quá thời gian sử dụng của vé
                     var newExcessMinutes = (int)(tripDuration - categoryTicket.UserTime * 60);
+                    var intervalsExceeded = newExcessMinutes / 30;
 
-                    if (newExcessMinutes > trip.ExcessMinutes) // Chỉ cập nhật khi có sự thay đổi
+                    if (intervalsExceeded > trip.ExcessMinutes / 30) // Chỉ cập nhật khi có sự thay đổi
                     {
+                        var excessIntervals = intervalsExceeded - trip.ExcessMinutes / 30;
                         trip.ExcessMinutes = newExcessMinutes;
 
-                        var excessIntervals = (newExcessMinutes - trip.ExcessMinutes) / 30;
                         var penaltyPoints = excessIntervals * 5000; // Mỗi 30 phút trừ 5000 điểm
-                        user.Point = Math.Max(0, user.Point - penaltyPoints); // Đảm bảo không âm điểm
-
+                        user.Point = Math.Max(-50000, user.Point - penaltyPoints); // Đảm bảo không âm điểm
+                        trip.TripPrice += 5000;
 
                         //Lấy thông báo có sẵn trong csdl
                         var notificationSent = await _notiRep.FindOneAsync(e => e.Title == "Thông báo nợ cước");
@@ -95,7 +95,6 @@ namespace MasterData.Application.Services.TripService
                         }
                     }
                 }
-
             }
             await _unitOfWork.SaveChangesAsync();
         }

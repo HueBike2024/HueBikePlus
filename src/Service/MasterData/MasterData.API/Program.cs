@@ -18,6 +18,7 @@ using Infrastructure.Services;
 using MasterData.API.Configurations;
 using MasterData.Application.Extentions;
 using MasterData.Application.Services.CloudinaryService;
+using MasterData.Application.Services.GoogleMaps;
 using MasterData.Application.Services.TicketService;
 using MasterData.Application.Services.TripService;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -56,7 +57,12 @@ services.AddSingleton(cloudinary);
 //Đăng kí dịch vụ payment
 services.Configure<PaymentServiceOptions>(builder.Configuration.GetSection("PaymentServiceOptions"));
 
+//Đăng kí random
 builder.Services.AddSingleton<IRandomService, RandomStringService>();
+
+//Đăng kí dịch vụ map
+builder.Services.AddHttpClient();
+builder.Services.AddSingleton<IMapService, MapService>();
 
 // Đăng ký service ImageUploader
 services.AddSingleton<ICloudPhotoService, CloudPhotoService>();

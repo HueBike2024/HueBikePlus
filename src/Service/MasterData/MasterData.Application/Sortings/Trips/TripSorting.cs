@@ -8,6 +8,9 @@ namespace MasterData.Application.Sortings.Trips
 {
     public class TripSorting
     {
-        //Todo: Các trường sắp xếp chuyến đi cho amdin
+        public static Dictionary<string, string> Mapping = new Dictionary<string, string>
+        {
+            { "bikeCode", "BikeCode" },
+        };
     }
 }
