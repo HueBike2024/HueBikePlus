@@ -109,6 +109,7 @@ namespace MasterData.Application.Commands.TripCommand
             var bike = await _bikeRep.FindOneAsync(e => e.Id == ticket.BikeId);
 
             bike.StatusId = status.Id;
+            bike.RentalQuantity += 1;
 
             _tripRep.Update(trip);
             _stationRep.Update(stationEnd);
