@@ -18,6 +18,9 @@ namespace MasterData.Application.DTOs.Station
        
         
         public string StatusName { get; set; }
+
+        public int ActiveBikeCount { get; set; } // Number of active bikes
+        public int InactiveBikeCount { get; set; } // Number of inactive bikes
         public long StatusId { get; set; }
         
     }

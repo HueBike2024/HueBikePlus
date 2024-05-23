@@ -7,6 +7,7 @@ using Infrastructure.AggregatesModel.MasterData.BikeManagementAggregate.BikeAggr
 using Infrastructure.AggregatesModel.MasterData.BikeManagementAggregate.BikeStationAggregate;
 using Infrastructure.AggregatesModel.MasterData.BikeManagementAggregate.MapLocationAggregate;
 using Infrastructure.AggregatesModel.MasterData.BikeManagementAggregate.StationAggregate;
+using Infrastructure.AggregatesModel.MasterData.EventAggregate;
 using Infrastructure.AggregatesModel.MasterData.ImageAggregate;
 using Infrastructure.AggregatesModel.MasterData.NotificationAggregate;
 using Infrastructure.AggregatesModel.MasterData.PostAggregate;
@@ -27,6 +28,7 @@ using Infrastructure.EntityConfigurations.MasterData.BannerConfig;
 using Infrastructure.EntityConfigurations.MasterData.BikeManagementConfig.BikeConfig;
 using Infrastructure.EntityConfigurations.MasterData.BikeManagementConfig.MapLocationConfig;
 using Infrastructure.EntityConfigurations.MasterData.BikeManagementConfig.StationConfig;
+using Infrastructure.EntityConfigurations.MasterData.EventConfig;
 using Infrastructure.EntityConfigurations.MasterData.ImageConfig;
 using Infrastructure.EntityConfigurations.MasterData.LogConfig;
 using Infrastructure.EntityConfigurations.MasterData.NotificationConfig;
@@ -93,6 +95,8 @@ namespace Infrastructure.EF
         public DbSet<Unit> Units { get; set; }
         // Post
         public DbSet<Post> Posts { get; set; }
+        //Event
+        public DbSet<Event> Events { get; set; }
 
         // Banner
         public DbSet<Banner> Banners { get; set; }
@@ -159,6 +163,8 @@ namespace Infrastructure.EF
 
             //Post
             builder.ApplyConfiguration(new PostConfiguration());
+            // Event
+            builder.ApplyConfiguration(new EventConfiguration());
 
             // Banner
             builder.ApplyConfiguration(new BannerConfiguration());
