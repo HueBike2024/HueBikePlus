@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Infrastructure.Services.GoogleMaps
+namespace MasterData.Application.Services.GoogleMaps
 {
     public interface IMapService
     {

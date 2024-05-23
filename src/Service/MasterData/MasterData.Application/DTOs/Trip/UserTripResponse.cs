@@ -10,6 +10,7 @@ namespace MasterData.Application.DTOs.Trip
     public class UserTripResponse : BaseExtendEntities
     {
         public int Index { get; set; }
+        public long Id { get; set; }
         public long BikeId { get; set; }
         public int? BikePower { get; set; }
         public string TripStatus { get; set; }

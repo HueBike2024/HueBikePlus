@@ -229,7 +229,7 @@
             public const string List = "list";
             public const string NewTrip = "new-trip";
             public const string ListOnTrip = "list-ongoing";
-            public const string TripHistory = "trip-hístory";
+            public const string TripHistory = "trip-history";
             public const string Start = "trip-start";
             public const string Delete = "del";
             public const string EndTrip = "trip-end";

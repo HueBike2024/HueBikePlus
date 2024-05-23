@@ -25,6 +25,26 @@ namespace MasterData.API.Controllers
             _mediator = mediator;
             _query = query;
         }
+
+        /// <summary>
+        /// Danh sách tất cả chuyến đi 
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        [HttpGet(TripRoutes.List)]
+        [ProducesResponseType(typeof(ApiSuccessResult<IList<ListTripResponse>>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> ListAllTrip([FromQuery] ListTripCommand command)
+        {
+            var response = await _query.ListTripAsync(command);
+
+            return Ok(new ApiSuccessResult<IList<ListTripResponse>>
+            {
+                Data = response.Data,
+                Paging = response.Paging,
+                Message = null
+            });
+        }
+
         /// <summary>
         /// Lấy thông tin xe khi quét mã Qr
         /// </summary>

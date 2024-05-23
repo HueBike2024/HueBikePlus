@@ -113,7 +113,7 @@ namespace MasterData.Application.Commands.TripCommand
             {
                 if (categoryTicket == null)
                 {
-                    throw new BaseException("Vé không tồn tại hoặc không hợp lệ!");
+                    throw new BaseException("Loại vé không tồn tại hoặc không hợp lệ!");
                 }
 
                 if (bike == null)
@@ -137,7 +137,7 @@ namespace MasterData.Application.Commands.TripCommand
                     UserPhone = null,
                     BikeId = bike.Id,
                     CategoryTicketId = categoryTicket.Id,
-                    BookingDate = DateTime.Now,
+                    BookingDate = DateTime.Now.AddMinutes(1),
                 };
 
                 var addTicketResponse = await _mediator.Send(addTicketCommand);
