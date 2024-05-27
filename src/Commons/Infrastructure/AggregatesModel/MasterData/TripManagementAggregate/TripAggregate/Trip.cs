@@ -14,13 +14,15 @@ namespace Infrastructure.AggregatesModel.MasterData.TripManagementAggregate.Trip
     {
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-        public int? TimeTrip {  get; set; }
         public bool IsEnd { get; set; }
         public bool IsDebt { get; set; }
         public long StartStationId { get; set;}
-        public long EndStationId { get; set; } = 0;
+        public long? EndStationId { get; set; } = null;
         public long TicketId { get; set;}
         public int MinutesTraveled { get; set; } = 0;
+        public int ExcessMinutes { get; set; } = 0; 
+        public decimal TripPrice { get; set; } = 0;
+        public bool IsSentNotificationDeft { get; set; } = false;
 
         public virtual Station StartStation { get; set; }
         public virtual Station EndStation { get; set; }
@@ -33,7 +35,7 @@ namespace Infrastructure.AggregatesModel.MasterData.TripManagementAggregate.Trip
             
         }
 
-        public Trip(bool isEnd, bool isDebt, long startStationId, long ticketId)
+        public Trip(bool isEnd, bool isDebt, long startStationId, long ticketId, decimal tripPrice)
         {
             StartDate = DateTime.Now;
             EndDate = DateTime.Now;
@@ -41,6 +43,7 @@ namespace Infrastructure.AggregatesModel.MasterData.TripManagementAggregate.Trip
             IsDebt = isDebt;
             StartStationId = startStationId;
             TicketId = ticketId;
+            TripPrice = tripPrice;
         }
     }
 }

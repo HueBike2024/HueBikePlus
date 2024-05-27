@@ -9,6 +9,7 @@ namespace MasterData.Application.DTOs.Trip
     public class GetBikeInfoForTripResponse
     {
         public long Id { get; set; }
+        public string BikeCode { get; set; }
         public string StationName { get; set; }
         public string Location { get; set;}
     }

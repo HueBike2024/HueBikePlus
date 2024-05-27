@@ -11,9 +11,9 @@ namespace MasterData.Application.DTOs.Bike
     {
         public int Index { get; set; }
         public long Id { get; set; }
-        public string BikeName { get; set; }
-        public long StationId { get; set; }
-        public string StationName { get; set; }
+        public string BikeCode { get; set; }
+        public long? StationId { get; set; }
+        public string? StationName { get; set; }
         public string? Location { get; set; }
         public string? PathQr { get; set; }
         public string? QrCodeImage { get; set; }

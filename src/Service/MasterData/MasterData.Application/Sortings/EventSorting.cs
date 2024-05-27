@@ -4,13 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MasterData.Application.Sortings.Trips
+namespace MasterData.Application.Sortings
 {
-    public class TripSorting
+    public class EventSorting
     {
         public static Dictionary<string, string> Mapping = new Dictionary<string, string>
         {
-            { "bikeCode", "BikeCode" },
+            { "title", "Title" },
+            {"description","Description" }
+
         };
     }
 }

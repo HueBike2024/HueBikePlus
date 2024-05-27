@@ -206,6 +206,17 @@
             public const string Detail = "detail";
         }
 
+        public static class EventRoutes
+        {
+            public const string Prefix = @"master-data/api/event";
+            public const string List = "list";
+            public const string Create = "create";
+            public const string Delete = "del";
+            public const string Update = "update";
+            public const string Detail = "detail";
+        }
+
+
         public static class BannerRoutes
         {
             public const string Prefix = @"master-data/api/banner";
@@ -228,9 +239,11 @@
             public const string Prefix = @"master-data/api/trip";
             public const string List = "list";
             public const string NewTrip = "new-trip";
-            public const string Create = "create";
+            public const string ListOnTrip = "list-ongoing";
+            public const string TripHistory = "trip-history";
+            public const string Start = "trip-start";
             public const string Delete = "del";
-            public const string Update = "update";
+            public const string EndTrip = "trip-end";
             public const string Detail = "detail";
         }
     }

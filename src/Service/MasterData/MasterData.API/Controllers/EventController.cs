@@ -1,89 +1,91 @@
 ﻿using Core.Infrastructure.Controllers;
 using Core.Models;
 using Core.Properties;
+using MasterData.Application.Commands.EventCommand;
 using MasterData.Application.Commands.PostCommand;
-using MasterData.Application.Commands.StationCommand;
+using MasterData.Application.DTOs.Event;
 using MasterData.Application.DTOs.Post;
 using MasterData.Application.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using static MasterData.API.Commons.Routes;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace MasterData.API.Controllers
 {
-    [Route(PostRoutes.Prefix)]
-    public class PostController : BaseApiController
+    [Route(EventRoutes.Prefix)]
+    public class EventController : BaseApiController
     {
         private readonly IMediator _mediator;
-        private readonly IPostQuery _query;
+        private readonly IEventQuery _query;
 
-        public PostController(IMediator mediator, IPostQuery query)
+        public EventController(IMediator mediator, IEventQuery query)
         {
             _mediator = mediator;
             _query = query;
         }
         /// <summary>
-        ///  Tạo 1 bài viết/tin tức
+        ///  Tạo 1 sự kiện
         /// </summary>
         /// <param name="command"></param>
         /// <returns></returns>
-        [HttpPost(PostRoutes.Create)]
+        [HttpPost(EventRoutes.Create)]
         [ProducesResponseType(typeof(ApiSuccessResult<bool>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> CreatePost([FromForm] CreatePostCommand command)
+        public async Task<IActionResult> CreatePost([FromForm] CreateEventCommand command)
         {
             var response = await _mediator.Send(command);
 
             return Ok(new ApiSuccessResult<bool>(
                 data: response,
-                message: string.Format(SuccessMessage.MSG_CREATE_SUCCESS, "Bài viết")));
+                message: string.Format(SuccessMessage.MSG_CREATE_SUCCESS, "Sự kiện")));
         }
 
         /// <summary>
-        /// Chỉnh sửa bài viết/ tin tức
+        /// Chỉnh sửa sự kiện
         /// </summary>
         /// <param name="command"></param>
         /// <returns></returns>
-        [HttpPut(PostRoutes.Create)]
+        [HttpPut(EventRoutes.Create)]
         [ProducesResponseType(typeof(ApiSuccessResult<bool>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> UpdateP([FromForm] CreatePostCommand command)
+        public async Task<IActionResult> UpdateP([FromForm] CreateEventCommand command)
         {
             var response = await _mediator.Send(command);
 
             return Ok(new ApiSuccessResult<bool>(
                 data: response,
-                message: string.Format(SuccessMessage.MSG_UPDATE_SUCCESS, "Bài viết")));
+                message: string.Format(SuccessMessage.MSG_UPDATE_SUCCESS, "Sự kiện")));
         }
 
 
 
         /// <summary>
-        /// Chi tiết thông tin 1 bài viết/tin tức
+        /// Chi tiết thông tin 1 sự kiện
         /// </summary>
         /// <param name="command"></param>
         /// <returns></returns>
-        [HttpGet(PostRoutes.Detail)]
-        [ProducesResponseType(typeof(ApiSuccessResult<PostDetailResponse>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetBike([FromQuery] GetPostCommand command)
+        [HttpGet(EventRoutes.Detail)]
+        [ProducesResponseType(typeof(ApiSuccessResult<EventDetailResponse>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetEvent([FromQuery] GetEventCommand command)
         {
             var response = await _query.GetAsync(command);
 
-            return Ok(new ApiSuccessResult<PostDetailResponse>(
+            return Ok(new ApiSuccessResult<EventDetailResponse>(
                 data: response));
         }
 
 
         /// <summary>
-        /// Danh sách bài viết/tin tức
+        /// Danh sách các sự kiện
         /// </summary>
         /// <param name="command"></param>
         /// <returns></returns>
-        [HttpGet(PostRoutes.List)]
-        [ProducesResponseType(typeof(ApiSuccessResult<IList<PostResponse>>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> ListBike([FromQuery] ListPostCommand command)
+        [HttpGet(EventRoutes.List)]
+        [ProducesResponseType(typeof(ApiSuccessResult<IList<EventResponse>>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> ListBike([FromQuery] ListEventCommand command)
         {
             var response = await _query.ListAsync(command);
 
-            return Ok(new ApiSuccessResult<IList<PostResponse>>
+            return Ok(new ApiSuccessResult<IList<EventResponse>>
             {
                 Data = response.Data,
                 Paging = response.Paging,
@@ -92,21 +94,23 @@ namespace MasterData.API.Controllers
         }
 
         /// <summary>
-        /// Xóa 1 bai viet/tin tức
+        /// Xóa 1 sự kiện
         /// </summary>
         /// <param name="command"></param>
         /// <returns></returns>
 
         [HttpDelete(PostRoutes.Delete)]
         [ProducesResponseType(typeof(ApiSuccessResult<bool>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> DeletePost(DeletePostCommand command)
+        public async Task<IActionResult> DeletePost(DeleteEventCommand command)
         {
             var response = await _mediator.Send(command);
 
             return Ok(new ApiSuccessResult<bool>(
                 data: response,
-                message: string.Format(SuccessMessage.MSG_DELETE_SUCCESS, "Post")));
+                message: string.Format(SuccessMessage.MSG_DELETE_SUCCESS, "Sự kiện")));
         }
+
+
 
 
     }

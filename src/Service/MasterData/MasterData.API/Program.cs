@@ -9,6 +9,8 @@ using Core.Models.Base;
 using Core.Models.Settings;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Hangfire;
+using Hangfire.SqlServer;
 using Infrastructure.AggregatesModel.MasterData.PaymentConst;
 using Infrastructure.EF;
 using Infrastructure.EntityConfigurations.MasterData.LogConfig;
@@ -16,7 +18,9 @@ using Infrastructure.Services;
 using MasterData.API.Configurations;
 using MasterData.Application.Extentions;
 using MasterData.Application.Services.CloudinaryService;
+using MasterData.Application.Services.GoogleMaps;
 using MasterData.Application.Services.TicketService;
+using MasterData.Application.Services.TripService;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.FileProviders;
 using SixLabors.ImageSharp;
@@ -53,14 +57,19 @@ services.AddSingleton(cloudinary);
 //Đăng kí dịch vụ payment
 services.Configure<PaymentServiceOptions>(builder.Configuration.GetSection("PaymentServiceOptions"));
 
+//Đăng kí random
 builder.Services.AddSingleton<IRandomService, RandomStringService>();
+
+//Đăng kí dịch vụ map
+builder.Services.AddHttpClient();
+builder.Services.AddSingleton<IMapService, MapService>();
 
 // Đăng ký service ImageUploader
 services.AddSingleton<ICloudPhotoService, CloudPhotoService>();
 
 //Dịch vụ kiểm tra vé
 //services.AddHostedService<CheckTicketTimeBefore15M>();
-services.AddHostedService<CheckTicketAvailability>();
+//services.AddHostedService<CheckTicketAvailability>();
 
 // Add services to the container.
 services.AddControllers();
@@ -92,6 +101,23 @@ services.ConfigureApplicationCookie(options =>
     options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
     options.SlidingExpiration = true;
 });
+
+// Cấu hình Hangfire
+builder.Services.AddHangfire(configuration => configuration
+    .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+    .UseSimpleAssemblyNameTypeSerializer()
+    .UseRecommendedSerializerSettings()
+    .UseSqlServerStorage(builder.Configuration.GetConnectionString("MainDatabase"), new SqlServerStorageOptions
+    {
+        CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+        SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+        QueuePollInterval = TimeSpan.Zero,
+        UseRecommendedIsolationLevel = true,
+        UsePageLocksOnDequeue = true,
+        DisableGlobalLocks = true
+    }));
+
+builder.Services.AddHangfireServer();
 
 services.AddHttpContextAccessor();
 //Lower case api url
@@ -213,6 +239,16 @@ app.MigrateDbContext<BaseDbContext>((context, services) =>
 {
     // Seeder data
 });
+
+// Sử dụng Hangfire Dashboard
+app.UseHangfireDashboard();
+
+// Sử dụng Hangfire Server
+app.UseHangfireServer();
+
+// Cấu hình các công việc sẽ được thực thi
+RecurringJob.AddOrUpdate<ITicketService>("CheckTicketTime", x => x.CheckTicketTime(CancellationToken.None), Cron.MinuteInterval(1));
+RecurringJob.AddOrUpdate<ITripService>("CheckTrips", x => x.CheckTrips(), Cron.MinuteInterval(1));
 
 app.MapRazorPages();
 app.Run();

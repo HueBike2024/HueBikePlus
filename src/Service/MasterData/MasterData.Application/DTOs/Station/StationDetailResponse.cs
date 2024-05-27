@@ -31,7 +31,7 @@ namespace MasterData.Application.DTOs.Station
     public class BikeList
     {
         public long Id { get; set; }
-        public string BikeName { get; set; }
+        public string BikeCode { get; set; }
        
         public string StatusName { get; set; }
     }

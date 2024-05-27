@@ -16,7 +16,7 @@ namespace MasterData.Application.DTOs.Ticket
         public string UserFullName { get; set; } = string.Empty;
         public string UserPhone { get; set; } = string.Empty;
         public long? BikeId { get; set; }
-        public string BikeName { get; set; }
+        public string BikeCode { get; set; }
         public long CategoryTicketId { get; set; }
         public string CategoryTicketName { get; set; }
         public string? PathQr { get; set; }

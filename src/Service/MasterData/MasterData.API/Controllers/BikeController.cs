@@ -30,6 +30,11 @@ namespace MasterData.API.Controllers
         [ProducesResponseType(typeof(ApiSuccessResult<bool>), StatusCodes.Status200OK)]
         public async Task<IActionResult> CreateBike([FromBody] CreateBikeCommand command)
         {
+            // Capture the current host and scheme
+            var requestHost = $"{Request.Scheme}://{Request.Host}";
+            //var requestHost = _configuration.GetValue<string>("Ngrok:BaseUrl");
+            command.BaseQrUrl = requestHost;
+
             var response = await _mediator.Send(command);
 
             return Ok(new ApiSuccessResult<bool>(

@@ -69,6 +69,11 @@ namespace MasterData.Application.Commands.TripCommand
                 throw new BaseException(ErrorsMessage.MSG_NOT_EXIST," Người dùng");
             }
 
+            var statusStation = await _statusRep.FindOneAsync(e => e.Id == station.StatusId);
+            if (statusStation.StatusName.Trim().ToLower().Contains("Đang bảo trì".Trim().ToLower()) || statusStation.StatusName.Trim().ToLower().Contains("Chưa sử dụng".Trim().ToLower()))
+            {
+                throw new BaseException("Trạm hiện tại đang bảo trì hoặc chưa tời thời gian hoạt động!");
+            }
 
             if (ticket != null)
             {
@@ -96,7 +101,7 @@ namespace MasterData.Application.Commands.TripCommand
                     throw new BaseException("Bạn cần phải có ít nhất 10.000 điểm để bắt đầu chuyến đi!");
                 }
 
-                var trip = new Trip(false, false, station.Id, ticket.Id);
+                var trip = new Trip(false, false, station.Id, ticket.Id, ticket.Price);
 
                 _tripRep.Add(trip);
                 
@@ -108,12 +113,22 @@ namespace MasterData.Application.Commands.TripCommand
             {
                 if (categoryTicket == null)
                 {
-                    throw new BaseException("Vé không tồn tại hoặc không hợp lệ!");
+                    throw new BaseException("Loại vé không tồn tại hoặc không hợp lệ!");
                 }
 
                 if (bike == null)
                 {
                     throw new BaseException("Xe không tồn tại hoặc không hợp lệ!");
+                }
+
+                if (bike == null)
+                {
+                    throw new BaseException("Xe không tồn tại hoặc không hợp lệ!");
+                }
+
+                if (user.Point < 10000)
+                {
+                    throw new BaseException("Bạn cần phải có ít nhất 10.000 điểm để bắt đầu chuyến đi!");
                 }
 
                 var addTicketCommand = new PreBookTicketCommand
@@ -122,7 +137,7 @@ namespace MasterData.Application.Commands.TripCommand
                     UserPhone = null,
                     BikeId = bike.Id,
                     CategoryTicketId = categoryTicket.Id,
-                    BookingDate = DateTime.Now,
+                    BookingDate = DateTime.Now.AddMinutes(1),
                 };
 
                 var addTicketResponse = await _mediator.Send(addTicketCommand);
@@ -132,7 +147,7 @@ namespace MasterData.Application.Commands.TripCommand
                     throw new BaseException("Có lỗi khi thực hiện chuẩn bị cho chuyến đi!");
                 }
 
-                var trip = new Trip(false, false, station.Id, addTicketResponse.Id);
+                var trip = new Trip(false, false, station.Id, addTicketResponse.Id, addTicketResponse.Price);
 
                 _tripRep.Add(trip);
 

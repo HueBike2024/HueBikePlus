@@ -111,6 +111,7 @@ namespace MasterData.API.Controllers
             try
             {
                 // Capture the current host and scheme from configuration
+                //var requestHost = $"{Request.Scheme}://{Request.Host}";
                 var requestHost = _configuration.GetValue<string>("Ngrok:BaseUrl");
                 command.BaseUrl = requestHost;
 
